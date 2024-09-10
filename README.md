@@ -1,6 +1,6 @@
 # Weather App
  
-Link - https://gopi515.github.io/Weather-App/
+Site is live at - https://gopi515.github.io/Weather-App/
 
 
 A real-time weather application that uses geolocation to provide current
