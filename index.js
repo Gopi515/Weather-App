@@ -151,20 +151,58 @@ searchForm.addEventListener("submit", (e) => {
 })
 
 async function fetchSearchWeatherInfo(city) {
-    loadingScreen.classList.add("active");
-    userInfoContainer.classList.remove("active");
-    grantAccessContainer.classList.remove("active");
+  loadingScreen.classList.add("active");
+  userInfoContainer.classList.remove("active");
+  grantAccessContainer.classList.remove("active");
 
-    try {
-        const response = await fetch(
-            `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`
-          );
-        const data = await response.json();
-        loadingScreen.classList.remove("active");
-        userInfoContainer.classList.add("active");
-        renderWeatherInfo(data);
+  try {
+    const response = await fetch(
+      `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`
+    );
+
+    // Check if the response is OK
+    if (!response.ok) {
+      throw new Error("City not found");
     }
-    catch(err) {
-        //hW
+
+    const data = await response.json();
+
+    // Check if the data contains an error message
+    if (data.cod === "404") {
+      // City not found
+      showNotFound();
+    } else {
+      // No error, render the weather info
+      loadingScreen.classList.remove("active");
+      userInfoContainer.classList.add("active");
+      renderWeatherInfo(data);
     }
+  } catch (err) {
+    console.error(err); // Log the error for debugging
+    showNotFound();
+  }
+}
+
+function showNotFound() {
+  // Hide the user-info-container
+  userInfoContainer.classList.remove("active");
+
+  // Show a "not-found" image in the user-info-container
+  const notFoundContainer = document.createElement("div");
+  notFoundContainer.classList.add("not-found-container");
+
+  const notFoundImage = document.createElement("img");
+  notFoundImage.src = "./assets/not-found.png"; // Path to your not-found image
+  notFoundImage.alt = "Not Found";
+
+  // Increase the image size
+  notFoundImage.style.width = "350px"; // Adjust as needed
+  notFoundImage.style.height = "350px"; // Adjust as needed
+
+  notFoundContainer.appendChild(notFoundImage);
+  userInfoContainer.innerHTML = ""; // Clear any previous content
+  userInfoContainer.appendChild(notFoundContainer);
+
+  loadingScreen.classList.remove("active");
+  userInfoContainer.classList.add("active");
 }
